@@ -6,7 +6,7 @@ describe("'Register' tests ...", function(){
 
 	describe("Register()", function(){
 		resetSettings();
-		doRegister(); // First one is always a 'hello'.
+		doHello(); // First one is always a 'hello'.
 		doRegister({channels:'1234'});
 		checkMessage(true, ['[sendWS]', '"channelID":"1234"', '"messageType":"register"']);
 		checkMessage(true, ['[onMessageWebsocket]' , '"status":200', '"channelID":"1234"', '"messageType":"register"']);
@@ -16,7 +16,7 @@ describe("'Register' tests ...", function(){
 	
 	describe("Register() null", function(){
 		resetSettings();
-		doRegister({channels:'1234'});
+		doHello(); // First one is always a 'hello'.
 		doRegister({channels: null});	
 		checkMessage(true, ['[sendWS]', '"channelID":null', '"messageType":"register"']);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
@@ -26,16 +26,25 @@ describe("'Register' tests ...", function(){
 	
 	describe("Register() invalid", function(){
 		resetSettings();
-		doRegister({channels:'1234'});
+		doHello(); // First one is always a 'hello'.
 		doRegister({channels: ''});
 		checkMessage(true, ['[sendWS]', '"channelID":""', '"messageType":"register"']);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"',]);
 		checkMessage(true, ['[onRegisterWAMessage]', '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
-		//doUnRegister(true, {channels:'1234'});
+	});
+
+	describe("Register() objectId", function(){
+		resetSettings();
+		doHello(); // First one is always a 'hello'.
+		doRegister({channels:1234});
+		checkMessage(true, ['[sendWS]', '"channelID":1234', '"messageType":"register"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
+		checkMessage(true, ['[onRegisterWAMessage]', '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
 	});
 	
 	describe("Register() several channels", function(){
 		resetSettings();
+		doHello(); // First one is always a 'hello'.
 		doRegister({channels:'1234'});
 		doRegister({channels:'4321'});
 		checkMessage(true, ['[sendWS]', '"channelID":"4321"', '"messageType":"register"']);
@@ -43,7 +52,6 @@ describe("'Register' tests ...", function(){
 		checkMessage(true, ['[onRegisterWAMessage]', '"status":200', '"channelID":"4321"', '"messageType":"register"']);
 		doUnRegister(true, {channels:'1234'});
 	});
-	
 });
 
 
@@ -51,7 +59,7 @@ describe("'Un-register' tests ...", function(){
 
 	describe("Unregister()", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); // First one is just 'hello'.
+		doHello(); // First one is always a 'hello'.
 		doRegister({channels:'1234'});
 		doUnRegister(false, {channels:'1234'});
 		checkMessage(true, ['[sendWS]', '"channelID":"1234"', '"messageType":"unregister"']);
@@ -61,24 +69,31 @@ describe("'Un-register' tests ...", function(){
 	
 	describe("Unregister() null", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); // First one is just 'hello'.
+		doHello(); // First one is always a 'hello'.
 		doRegister({channels:'1234'});
 		doUnRegister(false, { channels: null });
 		checkMessage(true, ['[sendWS]', '"channelID":null', '"messageType":"unregister"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":457', '"reason":"Not valid channelID sent"', '"messageType":"unregister"']);
-		//doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Unregister() invalid", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); // First one is just 'hello'.
+		doHello(); // First one is always a 'hello'.
 		doRegister({channels:'1234'});
 		doUnRegister(false, { channels: '' });
 		checkMessage(true, ['[sendWS]', 'Preparing to send', '"channelID":""', '"messageType":"unregister"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":457', '"reason":"Not valid channelID sent"', '"messageType":"unregister"']);
-		//doUnRegister(true, {channels:'1234'});
 	});
 	
+	describe("Unregister() objectId", function(){
+		resetSettings();
+		doHello(); // First one is always a 'hello'.
+		doRegister({channels:'1234'});
+		doUnRegister(false, { channels: 1234 });
+		checkMessage(true, ['[sendWS]', 'Preparing to send', '"channelID":""', '"messageType":"unregister"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":457', '"reason":"Not valid channelID sent"', '"messageType":"unregister"']);
+	});
+
 });
 
 
@@ -86,154 +101,148 @@ describe("'Hello' tests ...", function(){
 
 	describe("Hello()", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); 
-		doHello();
+		doHello(); // First one is always a 'hello'.
 		checkMessage(true, ['[sendWS]', '"uaid":_UAID', '"channelIDs":[]', '"messageType":"hello"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() null uaid", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); 
 		doHello({uaid:null});
 		checkMessage(true, ['[sendWS]', '"uaid":null', '"channelIDs":[]', '"messageType":"hello"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() invalid uaid", function(){
 		resetSettings();
-		doRegister({channels:'1234'});
 		doHello({uaid:''});
 		checkMessage(true, ['[sendWS]', '"uaid":""', '"channelIDs":[]', '"messageType":"hello"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() no channel ID", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); 
+		doHello({channels:null});
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":null', '"messageType":"hello"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
+	});
+
+	describe("Hello() empty channel ID array", function(){
+		resetSettings();
 		doHello({channels:[]});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() one channel ID", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); 
 		doHello({channels:['1234']});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":["1234"]', '"messageType":"hello"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() several channel IDs", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); 
-		doRegister({channels:'4321'});
 		doHello({channels:['1234','4321']});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":["1234","4321"]', '"messageType":"hello"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
-		doUnRegister(true, {channels:'4321'});
 	});
 	
 	describe("Hello() invalid IP, valid PORT", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); 
+		setTrue("wakeup_enabled");
 		doHello({ip:'256.256.256.256'});
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"interface"','"ip":"256.256.256.256"','"port":8080','"mobilenetwork"','"mcc":"214"','"mnc":"07"','"protocol":"tcp"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"ip":"256.256.256.256"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() valid IP, invalid PORT", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); 
+		setTrue("wakeup_enabled");
 		doHello({port:80000});
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"interface"','"ip":"owd-push-qa-fe1"','"port":80000','"mobilenetwork"','"mcc":"214"','"mnc":"07"','"protocol":"tcp"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"port":80000']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() valid IP, valid PORT", function(){
 		resetSettings();
-		doRegister({channels:'1234'}); 
+		setTrue("wakeup_enabled");
 		doHello();
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"interface"','"ip":"owd-push-qa-fe1"','"port":8080','"mobilenetwork"','"mcc":"214"','"mnc":"07"','"protocol":"tcp"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() invalid IP, invalid PORT", function(){
-		doRegister({channels:'1234'}); 
+		resetSettings();
+		setTrue("wakeup_enabled");
 		doHello({ip:'256.256.256.256',port:80000});
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"interface"','"ip":"256.256.256.256"','"port":80000','"mobilenetwork"','"mcc":"214"','"mnc":"07"','"protocol":"tcp"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"ip":"256.256.256.256"','"port":80000']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello() invalid mcc, valid mnc", function(){
-		doRegister({channels:'1234'}); 
+		resetSettings();
+		setTrue("wakeup_enabled");
 		doHello({mcc:'hola'});
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"interface"','"ip":"owd-push-qa-fe1"','"port":8080','"mobilenetwork"','"mcc":"hola"','"mnc":"07"','"protocol":"tcp"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mcc":"hola"','"mnc":"07"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello()  valid mcc, invalid mnc", function(){
-		doRegister({channels:'1234'}); 
+		resetSettings();
+		setTrue("wakeup_enabled");
 		doHello({mnc:'hola'});
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"interface"','"ip":"owd-push-qa-fe1"','"port":8080','"mobilenetwork"','"mcc":"214"','"mnc":"hola"','"protocol":"tcp"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mcc":"214"','"mnc":"hola"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello()  valid mcc, valid mnc", function(){
-		doRegister({channels:'1234'}); 
+		resetSettings();
+		setTrue("wakeup_enabled");
 		doHello();
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"interface"','"ip":"owd-push-qa-fe1"','"port":8080','"mobilenetwork"','"mcc":"214"','"mnc":"07"','"protocol":"tcp"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mcc":"214"','"mnc":"07"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 	describe("Hello()  invalid mcc, invalid mnc", function(){
-		doRegister({channels:'1234'}); 
+		resetSettings();
+		setTrue("wakeup_enabled");
 		doHello({mcc:'hola',mnc:'hola'});
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"interface"','"ip":"owd-push-qa-fe1"','"port":8080','"mobilenetwork"','"mcc":"hola"','"mnc":"hola"','"protocol":"tcp"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mobilenetwork"','"mcc":"hola"','"mnc":"hola"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
-		doUnRegister(true, {channels:'1234'});
 	});
 	
 });
 
 
-describe("'Ping/Pong' tests (these pause for > 1 minute) ...", function(){
+describe("Keepalive tests (these pause for > 1 minute) ...", function(){
 
-	describe("Set PING to true", function(){
+	describe("Set {} to true", function(){
 		resetSettings();
 		setTrue("ping");
-		checkMessage(true, ['[Websocket Keepalive]', 'Sending keepalive message', 'PING']);
-		checkMessage(true, ['[onMessageWebsocket]', 'Message received', 'PONG']);
+		doHello();
+		waits(61000);
+		checkMessage(true, ['[Websocket Keepalive]', 'Sending keepalive message', '{}']);
+		checkMessage(true, ['[onMessageWebsocket]', 'Message received', '{}']);
 		doUnRegister(true);
 	});
 	
-	describe("Set PONG to true", function(){
+	describe("Set {'hello'} to true", function(){
 		resetSettings();
 		setTrue("pong");
-		checkMessage(true, ['[Websocket Keepalive]', 'Sending keepalive message', 'PONG']);
+		doHello();
+		waits(61000);
+		checkMessage(true, ['[Websocket Keepalive]', 'Sending keepalive message', '{"hello"}']);
 		checkMessage(true, ['[onMessageWebsocket]','"status":450','"reason":"Data received is not a valid JSON package"']);
-		doUnRegister(true);
 	});
 
-	describe("Set OTHER to true", function(){
+	describe("Set {'verylongmessage'} to true", function(){
 		resetSettings();
 		setTrue("other");
-		checkMessage(true, ['[Websocket Keepalive]', 'Sending keepalive message', 'OTHER']);
+		doHello();
+		waits(61000);
+		checkMessage(true, ['[Websocket Keepalive]', 'Sending keepalive message']);
 		checkMessage(true, ['[onMessageWebsocket]','"status":450','"reason":"Data received is not a valid JSON package"']);
-		doUnRegister(true);
 	});
 });
 
@@ -243,12 +252,16 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 	describe("Set 'ack' to true", function(){
 		resetSettings();
 		setTrue("ack");
+		doHello();
+		waits(61000);
 		doUnRegister(true);
 	});
 	
 	describe("Set 'ack_null_updates' to true", function(){
 		resetSettings();
 		setTrue("ack_null_updates");
+		doHello();
+		waits(61000);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
 		doUnRegister(true);
 	});
@@ -256,6 +269,8 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 	describe("Set 'ack_invalid_channelID' to true", function(){
 		resetSettings();
 		setTrue("ack_invalid_channelID");
+		doHello();
+		waits(61000);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
 		doUnRegister(true);
 	});
@@ -263,6 +278,8 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 	describe("Set 'ack_null_channelID' to true", function(){
 		resetSettings();
 		setTrue("ack_null_channelID");
+		doHello();
+		waits(61000);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
 		doUnRegister(true);
 	});
@@ -270,6 +287,8 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 	describe("Set 'ack_null_version' to true", function(){
 		resetSettings();
 		setTrue("ack_null_version");
+		doHello();
+		waits(61000);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
 		doUnRegister(true);
 	});
@@ -277,8 +296,17 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 	describe("Set 'ack_invalid_version' to true", function(){
 		resetSettings();
 		setTrue("ack_invalid_version");
+		doHello();
+		waits(61000);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
 		doUnRegister(true);
+	});
+
+	describe("Set 'no_ack' to true", function(){
+		resetSettings();
+		setTrue("no_ack");
+		doHello();
+		waits(61000);
 	});
 	
 });

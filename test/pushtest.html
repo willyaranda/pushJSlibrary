@@ -20,7 +20,8 @@ and open the template in the editor.
       <button onclick="navigator.pushNotification.requestHello( { uaid: null } )">hello_null_uaid()</button>
       <button onclick="navigator.pushNotification.requestHello( { uaid: '' })">hello_invalid_uaid()</button>
       <br>
-      <button onclick="navigator.pushNotification.requestHello( { channels: [] })">hello_noChannelID()</button>
+      <button onclick="navigator.pushNotification.requestHello( { channels: null })">hello_noChannelID()</button>
+      <button onclick="navigator.pushNotification.requestHello( { channels: [] })">hello_emptyChannelIDarray()</button>
       <button onclick="navigator.pushNotification.requestHello( { channels: ['1234'] })">hello_oneChannelID()</button>
       <button onclick="navigator.pushNotification.requestHello( { channels: ['1234','4321'] })">hello_severalChannelID()</button>
       <br>
@@ -35,16 +36,18 @@ and open the template in the editor.
       <button onclick="navigator.pushNotification.requestHello( { mcc: 'hola', mnc: 'hola'} )">hello_mobile_nokmcc_nokmnc()</button>
       <hr>
       <h2>register tests</h2>
-      <button onclick="register( { channels: ['1234'] })">register()</button>
+      <button onclick="register( { channels: '1234' })">register()</button>
       <button onclick="register( { channels: null } )">register_null()</button>
       <button onclick="register( { channels: '' } )">register_invalid()</button>
-      <button onclick="register( { channels: ['4321'] })">register_several_channels()</button>
+      <button onclick="register( { channels: 1234})">register_objectId()</button>
+      <button onclick="register( { channels: '4321' })">register_several_channels()</button>
       <br>
       <hr>
       <h2>unregister tests</h2>
       <button onclick="navigator.pushNotification.revokeRemotePermission( { channels: '1234' })">unregister()</button>
       <button onclick="navigator.pushNotification.revokeRemotePermission( { channels: null } )">unregister_null()</button>
       <button onclick="navigator.pushNotification.revokeRemotePermission( { channels: '' } )">unregister_invalid()</button>
+      <button onclick="navigator.pushNotification.revokeRemotePermission( { channels: 1234 })">unregister_objectId()</button>
       <hr>
       <h2>ack tests</h2>
       <input id="ack" type="checkbox" onclick="changeSetup('ack',$('ack').checked)" /> ACK<br />
@@ -53,12 +56,13 @@ and open the template in the editor.
       <input id="ack_null_channelID" type="checkbox" onclick="changeSetup('ack_null_channelID',$('ack_null_channelID').checked)" /> ACK_null_channelID<br />
       <input id="ack_null_version" type="checkbox" onclick="changeSetup('ack_null_version',$('ack_null_version').checked)" /> ACK_null_version<br />
       <input id="ack_invalid_version" type="checkbox" onclick="changeSetup('ack_invalid_version',$('ack_invalid_version').checked)" /> ACK_invalid_version<br />
+      <input id="no_ack" type="checkbox" onclick="changeSetup('no_ack',$('no_ack').checked)" /> No_ack<br />
       <br>
       <hr>
-      <h2>PING PONG tests</h2>
-      <input id="ping" type="checkbox" onclick="changeSetup('ping',$('ping').checked)" /> PING<br />
-      <input id="pong" type="checkbox" onclick="changeSetup('pong',$('pong').checked)" /> PONG<br />
-      <input id="other" type="checkbox" onclick="changeSetup('other',$('other').checked)" /> Other thing<br />
+      <h2>Keepalive tests</h2>
+      <input id="ping" type="checkbox" onclick="changeSetup('ping',$('ping').checked)" /> {}<br />
+      <input id="pong" type="checkbox" onclick="changeSetup('pong',$('pong').checked)" /> {"hello"}<br />
+      <input id="other" type="checkbox" onclick="changeSetup('other',$('other').checked)" /> {"verylongmessage"}<br />
       <br>
       <hr>
       <div id="asyncmsg"></div>

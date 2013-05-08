@@ -3,7 +3,7 @@
 // COMMON FUNCTIONS.
 //
 var ConsoleLog	= new Array;
-var _PAUSE		= 6000;
+var _PAUSE		= 10000;
 var _DEBUG 		= true;
 var _UAID 		= false;
 
@@ -180,14 +180,8 @@ function doHello(_IN){
 			navigator.pushNotification.requestHello(_IN);
 		});
 		quickCommCheck();
+		waits(2000);
 	});
-	
-//	// These calls generate a new UAID, so catch it.
-//	it("get the UAID for this device from the console log", function(){
-//		runs(function(){
-//			expect(_UAID).not.toBeFalsy();
-//		});
-//	});
 }
 
 //
@@ -204,6 +198,7 @@ function doRegister(_IN){
 			register(_IN);
 		});
 		quickCommCheck();
+		waits(2000);
 	});
 }
 
@@ -283,8 +278,7 @@ function _doSetupChange(p_type, p_boolTrueFalse){
 //
 function setTrue(p_type){
 	_doSetupChange(p_type, true);
-	doRegister(['1234']);
-	waits(61000); // wait for > 1 min.	
+	waits(2000);
 }
 
 

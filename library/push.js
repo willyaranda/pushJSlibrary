@@ -19,11 +19,14 @@
  */
 
 function _Push() {
+
 }
+
 _Push.prototype = {
   /////////////////////////////////////////////////////////////////////////
   // Push methods
   /////////////////////////////////////////////////////////////////////////
+  very_long_message: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 \ 111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
 
   setGlobals: function(_IN){
     _IN = typeof _IN !== 'undefined' ? _IN : {whatever:true};
@@ -34,8 +37,7 @@ _Push.prototype = {
     this._mcc      = typeof _IN.mcc      !== 'undefined' ? _IN.mcc      : this.wakeup.mcc;
     this._mnc      = typeof _IN.mnc      !== 'undefined' ? _IN.mnc      : this.wakeup.mnc;
     this._protocol = typeof _IN.protocol !== 'undefined' ? _IN.protocol : this.wakeup.protocol;
-	
-	this._IN = _IN;
+    this._IN = _IN;
   },
 
   requestURL: function(watoken, certUrl) {
@@ -44,7 +46,7 @@ _Push.prototype = {
   },
 
   requestHello: function(_IN) {
-    this.hello(_IN); 
+    this.hello(_IN,false); 
   },
 
   requestRemotePermissionEx: function(watoken, certUrl) {
@@ -163,8 +165,9 @@ _Push.prototype = {
       ack_null_channelID: ['ack_null_channelID','this.ack_null_channelID', true],
       ack_null_version: ['ack_null_version','this.ack_null_version', true],
       ack_invalid_version: ['ack_invalid_version','this.ack_invalid_version', true],
+      no_ack: ['no_ack','this.no_ack',true],
 
-      //PING PONG
+      //keep alive
       ping: ['ping','this.ping', true],
       pong: ['pong','this.pong', true],
       other: ['other','this.other', true]
@@ -212,6 +215,7 @@ _Push.prototype = {
     _setup(_params.ack_null_channelID, data.ack_null_channelID);
     _setup(_params.ack_null_version, data.ack_null_version);
     _setup(_params.ack_invalid_version, data.ack_invalid_version);
+    _setup(_params.no_ack, data.no_ack);
 
     // Ping pong params
     _setup(_params.ping, data.ping);
@@ -251,6 +255,7 @@ _Push.prototype = {
       ack_null_channelID: this.ack_null_channelID,
       ack_null_version: this.ack_null_version,
       ack_invalid_version: this.ack_invalid_version,
+      no_ack: this.noack,
       ping: this.ping,
       pong: this.pong,
       other: this.other
@@ -274,7 +279,7 @@ _Push.prototype = {
       ssl: true,
       keepalive: 60000,
       wakeup_enabled: false,
-      wakeup_host: 'owd-push-qa-fe1',
+      wakeup_host: '10.95.30.173',
       wakeup_port: 8080,
       wakeup_protocol: 'udp',
       wakeup_mcc: '214',
@@ -285,6 +290,7 @@ _Push.prototype = {
       ack_null_channelID: false,
       ack_null_version: false,
       ack_invalid_version: false,
+      no_ack: false,
       ping: true,
       pong: false,
       other: false
@@ -324,12 +330,13 @@ _Push.prototype = {
   hello: function(_IN) {
 
     this.setGlobals(_IN);
+    this.openWebsocket();
 
     if (this.wakeup.enabled) {
       this.sendWS({
         uaid: this._uaid,
         channelIDs: this._channels,
-        'interface': {
+        'wakeup_hostport': {
           ip: this._ip,
           port: this._port
         },
@@ -347,6 +354,12 @@ _Push.prototype = {
         messageType: 'hello'
       });
     }
+   
+    this.onHelloMessage = function(msg) {
+      this.token = msg.uaid;
+    }.bind(this);
+
+ 
   },
 
   /**
@@ -363,7 +376,7 @@ _Push.prototype = {
       if(cb) cb();
     }.bind(this);
 
-    this.openWebsocket();
+    //this.openWebsocket();
   },
 
   /**
@@ -423,7 +436,8 @@ _Push.prototype = {
   sendWS: function(json) {
     var msg = JSON.stringify(json);
     this.debug('[sendWS] Preparing to send: ' + msg);
-    this.server.ws.connection.send(msg);
+    if (this.server.ws.ready)
+      this.server.ws.connection.send(msg);
   },
 
   /**
@@ -441,14 +455,14 @@ _Push.prototype = {
     if(this.server.keepalive > 0) {
       this.keepalivetimer = setInterval(function() {
         if (this.pong){
-		this.debug('[Websocket Keepalive] Sending keepalive message. PONG');
-        	this.server.ws.connection.send('PONG');
+		this.debug('[Websocket Keepalive] Sending keepalive message. {"hello"}');
+        	this.server.ws.connection.send('{"hello"}');
 	} else if (this.other) {
-		this.debug('[Websocket Keepalive] Sending keepalive message. OTHER');
-		this.server.ws.connection.send('OTHER');
+		this.debug('[Websocket Keepalive] Sending keepalive message. {"verylongmessage"}');
+		this.server.ws.connection.send('{"' + this.very_long_message + '"}');
 	} else if (this.ping) {
-		this.debug('[Websocket Keepalive] Sending keepalive message. PING');
-		this.server.ws.connection.send('PING');
+		this.debug('[Websocket Keepalive] Sending keepalive message. {}');
+		this.server.ws.connection.send('{}');
 	}
       }.bind(this), this.server.keepalive);
     }
@@ -487,11 +501,12 @@ _Push.prototype = {
     switch(msg.messageType) {
       case 'hello':
         this.server.registeredUA = true;
-        this.onRegisterUAMessage(msg);
+	this.onHelloMessage(msg);
         break;
 
       case 'register':
         this.debug('[manageWebSocketResponse register] Registered channelID');
+	//this.onRegisterUAMessage(msg);
         this.onRegisterWAMessage(msg);
         break;
 
@@ -505,53 +520,58 @@ _Push.prototype = {
 	
 	if (this.ack_null_updates)	
 	{
-		this.debug('[sendWS]{messageType: "ack",messageId: {messageType: "notification", updates: null, status: "OK"}}');
+		this.debug('[sendWS]{"messageType": "ack", "updates": null}');
         	this.sendWS({
           		messageType: 'ack',
-          		messageId: {messageType: "notification", updates: null, status: "OK"}
+			updates: null
         	});
         	break;
 	} else if (this.ack_invalid_channelID)
 	{
-		this.debug('[sendWS]{messageType: "ack",messageId: {messageType: "notification", updates: { channelID: "", version: 1},status: "OK"}}');
+		this.debug('[sendWS]{"messageType": "ack", "updates": {"channelID": "", "version": 1}}');
         	this.sendWS({
           		messageType: 'ack',
-          		messageId: {messageType: "notification", updates: { channelID: "", version: 1}, status: "OK"}
+          		updates: { channelID: "", version: 1}
         	});
         	break;
 	} else if (this.ack_null_channelID)
 	{
-		this.debug('[sendWS]{messageType: "ack",messageId: {messageType: "notification", updates: { channelID: null, version: 1},status: "OK"}}');
+		this.debug('[sendWS]{"messageType": "ack", "updates": { "channelID": null, "version": 1}}');
         	this.sendWS({
           		messageType: 'ack',
-          		messageId: {messageType: "notification", updates: { channelID: null, version: 1}, status: "OK"}
+          		updates: { channelID: null, version: 1}
         	});
         	break;
 	} else if (this.ack_null_version)
 	{
-		this.debug('[sendWS]{messageType: "ack",messageId: {messageType: "notification", updates: { channelID: "1234", version: null},status: "OK"}}');
+		this.debug('[sendWS]{"messageType": "ack", "updates": { "channelID": "1234", "version": null}}');
         	this.sendWS({
           		messageType: 'ack',
-          		messageId: {messageType: "notification", updates: { channelID: "1234", version: null}, status: "OK"}
+          		updates: { channelID: "1234", version: null}
         	});
         	break;
 	} else if (this.ack_invalid_version)
 	{
-		this.debug('[sendWS]{messageType: "ack",messageId: {messageType: "notification", updates: { channelID: "1234", version: ""},status: "OK"}}');
+		this.debug('[sendWS]{"messageType": "ack", "updates": { "channelID": "1234", "version": ""}}');
         	this.sendWS({
           		messageType: 'ack',
-          		messageId: {messageType: "notification", updates: { channelID: "1234", version: ""}, status: "OK"}
+          		updates: { channelID: "1234", version: ""}
         	});
         	break;
-	} 
-
-	this.debug('[sendWS]{messageType: "ack",messageId:', msg);
-      	this.sendWS({
-
-       		messageType: 'ack',
-       		messageId: msg
-      	});
-       	break;
+	}  else if (this.no_ack)
+	{
+		//We won't send nothing
+		this.debug('NO ACK');
+        	break;
+	} else
+	{
+		this.debug('[sendWS]{"messageType": "ack", "updates"', msg.updates);
+	      	this.sendWS({
+	       		messageType: 'ack',
+       			updates: msg.updates
+      		});
+       		break;
+	}
     }
   },
 
