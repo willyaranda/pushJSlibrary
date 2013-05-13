@@ -2,11 +2,13 @@
       return document.getElementById(id);
     };
 
-    function register(_IN) {
+    function register(_IN,callback) {
     var c = navigator.pushNotification.requestRemotePermission(_IN);
   	c.onsuccess=function(url) {
     		$('endpointURL').innerHTML = url;
 		_IN.pushEndPointURL = url;
+                if (callback)
+                  callback(url, 1);
   	};
   	c.onmessage=function(msg) {
     		$('asyncmsg').innerHTML = JSON.stringify(msg);

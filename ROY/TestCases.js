@@ -253,11 +253,9 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack");
 		doHello();
-		doRegister({channels: '1234'});		
-		waits(5000);
-		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
-		doHello();
-		waits(61000);
+                doUpdateVersion({channels: '1234'});
+		waits(1000);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"1"}]']);
 		doUnRegister(true);
 	});
 	
@@ -265,12 +263,9 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_updates");
 		doHello();
-		doRegister({channels: '1234'});		
+                doUpdateVersion({channels: '1234'});
 		waits(1000);
-		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
-		doHello();
-		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 	
@@ -278,12 +273,9 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_invalid_channelID");
 		doHello();
-		doRegister({channels: '1234'});		
+                doUpdateVersion({channels: '1234'});
 		waits(1000);
-		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
-		doHello();
-		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 	
@@ -291,12 +283,9 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_channelID");
 		doHello();
-		doRegister({channels: '1234'});		
+		doUpdateVersion({channels: '1234'});		
 		waits(1000);
-		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
-		doHello();
-		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 	
@@ -304,12 +293,9 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_version");
 		doHello();
-		doRegister({channels: '1234'});		
+		doUpdateVersion({channels: '1234'});		
 		waits(1000);
-		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
-		doHello();
-		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 	
@@ -317,12 +303,9 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_invalid_version");
 		doHello();
-		doRegister({channels: '1234'});		
+		doUpdateVersion({channels: '1234'});		
 		waits(1000);
-		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
-		doHello();
-		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 
@@ -330,11 +313,10 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("no_ack");
 		doHello();
-		doRegister({channels: '1234'});		
+		doUpdateVersion({channels: '1234'});		
 		waits(1000);
-		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
-		doHello();
-		waits(61000);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"1"}]']);
+		doUnRegister(true);
 	});
 	
 });
