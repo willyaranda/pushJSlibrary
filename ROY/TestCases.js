@@ -90,7 +90,7 @@ describe("'Un-register' tests ...", function(){
 		doHello(); // First one is always a 'hello'.
 		doRegister({channels:'1234'});
 		doUnRegister(false, { channels: 1234 });
-		checkMessage(true, ['[sendWS]', 'Preparing to send', '"channelID":""', '"messageType":"unregister"']);
+		checkMessage(true, ['[sendWS]', 'Preparing to send', '"channelID":1234', '"messageType":"unregister"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":457', '"reason":"Not valid channelID sent"', '"messageType":"unregister"']);
 	});
 
@@ -253,6 +253,10 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack");
 		doHello();
+		doRegister({channels: '1234'});		
+		waits(5000);
+		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
+		doHello();
 		waits(61000);
 		doUnRegister(true);
 	});
@@ -261,8 +265,12 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_updates");
 		doHello();
+		doRegister({channels: '1234'});		
+		waits(1000);
+		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
+		doHello();
 		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 	
@@ -270,8 +278,12 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_invalid_channelID");
 		doHello();
+		doRegister({channels: '1234'});		
+		waits(1000);
+		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
+		doHello();
 		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 	
@@ -279,8 +291,12 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_channelID");
 		doHello();
+		doRegister({channels: '1234'});		
+		waits(1000);
+		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
+		doHello();
 		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 	
@@ -288,8 +304,12 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_version");
 		doHello();
+		doRegister({channels: '1234'});		
+		waits(1000);
+		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
+		doHello();
 		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 	
@@ -297,14 +317,22 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_invalid_version");
 		doHello();
+		doRegister({channels: '1234'});		
+		waits(1000);
+		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
+		doHello();
 		waits(61000);
-		checkMessage(true, ['[onMessageWebsocket]', '"status":"ERROR"']);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"register"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
 	});
 
 	describe("Set 'no_ack' to true", function(){
 		resetSettings();
 		setTrue("no_ack");
+		doHello();
+		doRegister({channels: '1234'});		
+		waits(1000);
+		doUpdateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);
 		doHello();
 		waits(61000);
 	});

@@ -90,10 +90,10 @@ and open the template in the editor.
     <div id="asTEST">
       <h2>Send a thialfy-like notification to this app</h2>
       <input id="channelVersion" value="1" />
-      <button onclick="updateVersion()">updateVersion()</button>
-      <button onclick="updateVersion_noVersion()">updateVersion_noVersion()</button>
-      <button onclick="updateVersion_wrongEndPoint()">updateVersion_wrongEndPoint()</button>
-      <button onclick="updateVersion_incorrectVersion()">updateVersion_incorrectVersion()</button>
+      <button onclick="updateVersion($('endpointURL').innerHTML,$('channelVersion').value)">updateVersion()</button>
+      <button onclick="updateVersion_noVersion($('endpointURL').innerHTML,$('channelVersion').value)">updateVersion_noVersion()</button>
+      <button onclick="updateVersion_wrongEndPoint($('endpointURL').innerHTML,$('channelVersion').value)">updateVersion_wrongEndPoint()</button>
+      <button onclick="updateVersion_incorrectVersion($('endpointURL').innerHTML,$('channelVersion').value)">updateVersion_incorrectVersion()</button>
     </div>
   </body>
 </html>

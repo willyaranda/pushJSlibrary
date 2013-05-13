@@ -37,6 +37,7 @@ _Push.prototype = {
     this._mcc      = typeof _IN.mcc      !== 'undefined' ? _IN.mcc      : this.wakeup.mcc;
     this._mnc      = typeof _IN.mnc      !== 'undefined' ? _IN.mnc      : this.wakeup.mnc;
     this._protocol = typeof _IN.protocol !== 'undefined' ? _IN.protocol : this.wakeup.protocol;
+    this._pushEndPointURL = typeof _IN.pushEndPointURL !== 'undefined' ? _IN.pushEndPointURL : this.pushEndPointURL;
     this._IN = _IN;
   },
 
@@ -170,7 +171,9 @@ _Push.prototype = {
       //keep alive
       ping: ['ping','this.ping', true],
       pong: ['pong','this.pong', true],
-      other: ['other','this.other', true]
+      other: ['other','this.other', true],
+
+      pushEndPointURL: ['pushEndPointURL','this.pushEndPointURL',true]
     };
     var _setup = function(param, value) {
       if(param === undefined) {
@@ -222,6 +225,8 @@ _Push.prototype = {
     _setup(_params.pong, data.pong);
     _setup(_params.other, data.other);
 
+    _setup(_params.pushEndPointURL, data.pushEndPointURL);
+
     //_setup(_params.)
 
     if (!this.initialized) {
@@ -258,7 +263,8 @@ _Push.prototype = {
       no_ack: this.noack,
       ping: this.ping,
       pong: this.pong,
-      other: this.other
+      other: this.other,
+      pushEndPointURL: this.pushEndPointURL
     };
   },
 

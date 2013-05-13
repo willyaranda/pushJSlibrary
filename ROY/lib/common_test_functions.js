@@ -217,6 +217,23 @@ function doUnRegister(p_skipCheck, _IN){
 }
 
 //
+// Update version
+//
+function doUpdateVersion(URL,version){
+	it ("(updateVersion)", function(){
+		runs(function(){
+			//
+			// Always clear the array first so we know that what's in it came AFTER our click.
+			//
+			ConsoleLog.length = 0;
+			updateVersion(URL,version);
+		});
+		//quickCommCheck();
+		waits(2000);
+	});
+}
+
+//
 // Check the console log for a specific message.
 //
 function checkMessage(p_true, p_regexp_array){
@@ -269,7 +286,7 @@ function _doSetupChange(p_type, p_boolTrueFalse){
 		});
 	});
 	checkMessage(true, ['setup', 'Setup data received:', '{"' + p_type + '":"' + p_boolTrueFalse + '"}']);
-	checkMessage(true, ['setup', 'Changing ' + p_type + ' to: '+ p_boolTrueFalse]);
+	//checkMessage(true, ['setup', 'Changing ' + p_type + ' to: '+ p_boolTrueFalse]);
 	checkMessage(true, ['setup', 'Reinitializing']);
 }
 

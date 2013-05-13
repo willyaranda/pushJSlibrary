@@ -6,6 +6,7 @@
     var c = navigator.pushNotification.requestRemotePermission(_IN);
   	c.onsuccess=function(url) {
     		$('endpointURL').innerHTML = url;
+		_IN.pushEndPointURL = url;
   	};
   	c.onmessage=function(msg) {
     		$('asyncmsg').innerHTML = JSON.stringify(msg);
@@ -40,6 +41,7 @@
       $('setup_wu_proto').value = c.wakeup_protocol;
       $('setup_wu_mcc').value = c.wakeup_mcc;
       $('setup_wu_mnc').value = c.wakeup_mnc;
+      $('endpointURL').value = c.pushEndPointURL;
     };
 
     function changeSetup(param, value) {
@@ -47,13 +49,16 @@
       getSetup();
     };
 
-    function updateVersion() {
+    function updateVersion(URL,version) {
       var oReq = new XMLHttpRequest();
       oReq.onload = function() {
         console.log(this.responseText);
       };
-      oReq.open('put', $('endpointURL').innerHTML, true);
-      oReq.send('version='+$('channelVersion').value);
+      console.log("URL: " + URL + " Version: "+ version);
+      //oReq.open('put', $('endpointURL').innerHTML, true);
+      //oReq.send('version='+$('channelVersion').value);
+      oReq.open('put', URL, true);
+      oReq.send('version=' + version);
     };
 
     function updateVersion_noVersion() {
