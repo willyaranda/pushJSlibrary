@@ -203,6 +203,24 @@ function doRegister(_IN){
 }
 
 //
+// Register fake
+//
+function doRegister_fake(_IN){
+	it ("(register_fake)", function(){
+		runs(function(){
+			if (_DEBUG) console.log("XXXXX registering...");
+			//
+			// Always clear the array first so we know that what's in it came AFTER our click.
+			//
+			ConsoleLog.length = 0;
+			register_fake(_IN);
+		});
+		quickCommCheck();
+		waits(2000);
+	});
+}
+
+//
 // Un-register
 //
 function doUnRegister(p_skipCheck, _IN){

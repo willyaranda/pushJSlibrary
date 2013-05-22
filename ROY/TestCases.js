@@ -2,6 +2,16 @@
 //
 // THE TESTS.
 //
+describe("'Register' as first message in the connection test ...", function(){
+
+	describe("Register_fake()", function(){
+		resetSettings();
+		doRegister_fake({channels:'1234'});
+		checkMessage(true, ['[sendWS]', '"channelID":"1234"', '"messageType":"register"']);
+	});
+
+});
+
 describe("'Register' tests ...", function(){
 
 	describe("Register()", function(){
@@ -147,6 +157,13 @@ describe("'Hello' tests ...", function(){
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":["1234","4321"]', '"messageType":"hello"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
 	});
+
+	describe("Hello() objectId as channel ID", function(){
+		resetSettings();
+		doHello({channels: 1234});
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":1234, '"messageType":"hello"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":457', '"uaid":_UAID', '"messageType":"hello"']);
+	});
 	
 	describe("Hello() invalid IP, valid PORT", function(){
 		resetSettings();
@@ -210,6 +227,72 @@ describe("'Hello' tests ...", function(){
 		doHello({mcc:'hola',mnc:'hola'});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mobilenetwork"','"mcc":"hola"','"mnc":"hola"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
+	});
+
+	describe("Hello()  change IP", function(){
+		resetSettings();
+		setTrue("wakeup_enabled");
+		doHello();
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		doHello({ip:'10.95.30.174'});
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"ip":"10.95.30.174"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+	});
+
+	describe("Hello()  change port", function(){
+		resetSettings();
+		setTrue("wakeup_enabled");
+		doHello();
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		doHello({port:8081});
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"port":8081']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+	});
+
+	describe("Hello()  change IP and port", function(){
+		resetSettings();
+		setTrue("wakeup_enabled");
+		doHello();
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		doHello({ip:'10.95.30.174',port:8081});
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"ip":"10.95.30.174"','"port":8081']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+	});
+
+	describe("Hello()  change mcc", function(){
+		resetSettings();
+		setTrue("wakeup_enabled");
+		doHello();
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		doHello({mcc:'215'});
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mcc":"215"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+	});
+
+	describe("Hello()  change mnc", function(){
+		resetSettings();
+		setTrue("wakeup_enabled");
+		doHello();
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		doHello({mnc:'08'});
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mnc":"08"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+	});
+
+	describe("Hello()  change mcc and mnc", function(){
+		resetSettings();
+		setTrue("wakeup_enabled");
+		doHello();
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		doHello({mcc:'215',mnc:'08'});
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mcc":"215"','"mnc":"08"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
 	});
 	
 });

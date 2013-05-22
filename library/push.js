@@ -33,9 +33,13 @@ _Push.prototype = {
     this._uaid     = typeof _IN.uaid     !== 'undefined' ? _IN.uaid     : this.token;
     this._channels = typeof _IN.channels !== 'undefined' ? _IN.channels : [];
     this._ip       = typeof _IN.ip       !== 'undefined' ? _IN.ip       : this.wakeup.host;
+    this._ip_alt   = typeof _IN.ip_alt   !== 'undefined' ? _IN.ip_alt   : this.wakeup.host_alt;
     this._port     = typeof _IN.port     !== 'undefined' ? _IN.port     : this.wakeup.port;
+    this._port_alt = typeof _IN.port_alt !== 'undefined' ? _IN.port_alt : this.wakeup.port_alt;
     this._mcc      = typeof _IN.mcc      !== 'undefined' ? _IN.mcc      : this.wakeup.mcc;
+    this._mcc_alt  = typeof _IN.mcc_alt  !== 'undefined' ? _IN.mcc_alt  : this.wakeup.mcc_alt;
     this._mnc      = typeof _IN.mnc      !== 'undefined' ? _IN.mnc      : this.wakeup.mnc;
+    this._mnc_alt  = typeof _IN.mnc_alt  !== 'undefined' ? _IN.mnc_alt  : this.wakeup.mnc_alt;
     this._protocol = typeof _IN.protocol !== 'undefined' ? _IN.protocol : this.wakeup.protocol;
     this._pushEndPointURL = typeof _IN.pushEndPointURL !== 'undefined' ? _IN.pushEndPointURL : this.pushEndPointURL;
     this._IN = _IN;
@@ -106,6 +110,33 @@ _Push.prototype = {
     return cb;
   },
 
+  requestRemotePermission_fake: function(_IN) {
+    var cb = {};
+
+    this.setGlobals(_IN);
+    this.openWebsocket_reg();
+
+    this.registerUA(function () {
+      this.registerWA(function(URL) {
+        this.debug('[registerWA Callback] URL: ',URL);
+        if(cb.onsuccess) {
+          cb.onsuccess(URL);
+        }
+      }.bind(this));
+    }.bind(this));
+
+    var self=this;
+    window.addEventListener('pushmessage', function(event) {
+      self.debug('[pushmessage Callback] Message: ',event);
+      if(cb.onmessage) {
+        cb.onmessage(JSON.parse(event.detail.message));
+      }
+    });
+
+    return cb;
+  },
+
+
   revokeRemotePermission: function(_IN) {
 
     this.setGlobals(_IN);
@@ -154,10 +185,14 @@ _Push.prototype = {
       // WakeUp development parameters
       wakeup_enabled: ['WakeUp ENABLED', 'this.wakeup.enabled', true],
       wakeup_host: ['WakeUp host', 'this.wakeup.host', true],
+      wakeup_alt_host: ['WakeUp alt host', 'this.wakeup.host_alt', true],
       wakeup_port: ['WakeUp port', 'this.wakeup.port', true],
+      wakeup_alt_port: ['WakeUp alt port', 'this.wakeup.port_alt', true],
       wakeup_protocol: ['WakeUp protocol', 'this.wakeup.protocol', true],
       wakeup_mcc: ['WakeUp MCC', 'this.wakeup.mcc', true],
+      wakeup_alt_mcc: ['WakeUp alt MCC', 'this.wakeup.mcc_alt', true],
       wakeup_mnc: ['WakeUp MNC', 'this.wakeup.mnc', true],
+      wakeup_alt_mnc: ['WakeUp alt MNC', 'this.wakeup.mnc_alt', true],
 
       //ACK message type
       ack: ['ack','this.ack', true],
@@ -206,10 +241,14 @@ _Push.prototype = {
     // WakeUp development parameters
     _setup(_params.wakeup_enabled, data.wakeup_enabled);
     _setup(_params.wakeup_host, data.wakeup_host);
+    _setup(_params.wakeup_alt_host, data.wakeup_alt_host);
     _setup(_params.wakeup_port, data.wakeup_port);
+    _setup(_params.wakeup_alt_port, data.wakeup_alt_port);
     _setup(_params.wakeup_protocol, data.wakeup_protocol);
     _setup(_params.wakeup_mcc, data.wakeup_mcc);
+    _setup(_params.wakeup_alt_mcc, data.wakeup_alt_mcc);
     _setup(_params.wakeup_mnc, data.wakeup_mnc);
+    _setup(_params.wakeup_alt_mnc, data.wakeup_alt_mnc);
 
     // ACK parameters
     _setup(_params.ack, data.ack);
@@ -250,10 +289,14 @@ _Push.prototype = {
       keepalive: this.server.keepalive,
       wakeup_enabled: this.wakeup.enabled,
       wakeup_host: this.wakeup.host,
+      wakeup_alt_host: this.wakeup.host_alt,
       wakeup_port: this.wakeup.port,
+      wakeup_alt_port: this.wakeup.port_alt,
       wakeup_protocol: this.wakeup.protocol,
       wakeup_mcc: this.wakeup.mcc,
+      wakeup_alt_mcc: this.wakeup.mcc_alt,
       wakeup_mnc: this.wakeup.mnc,
+      wakeup_alt_mnc: this.wakeup.mnc_alt,
       ack: this.ack,
       ack_null_updates: this.ack_null_updates,
       ack_invalid_channelID: this.ack_invalid_channelID,
@@ -286,10 +329,14 @@ _Push.prototype = {
       keepalive: 60000,
       wakeup_enabled: false,
       wakeup_host: '10.95.30.173',
+      wakeup_alt_host: '10.95.30.174',
       wakeup_port: 8080,
+      wakeup_alt_port: 8081,
       wakeup_protocol: 'udp',
       wakeup_mcc: '214',
+      wakeup_alt_mcc: '215',
       wakeup_mnc: '07',
+      wakeup_alt_mnc: '08',
       ack: true,
       ack_null_updates: false,
       ack_invalid_channelID: false,
@@ -437,6 +484,23 @@ _Push.prototype = {
   },
 
   /**
+   * Open Websocket connection special version with register operation instead of hello
+   */
+  openWebsocket_reg: function() {
+    if (this.server.ws.ready)
+      return;
+
+    this.debug('[openWebsocket] Openning websocket to: ' + this.server.ad_ws);
+    this.server.ws.connection =
+      new WebSocket(this.server.ad_ws, 'push-notification');
+
+    this.server.ws.connection.onopen_reg = this.onOpenWebsocket_reg.bind(this);
+    this.server.ws.connection.onclose = this.onCloseWebsocket.bind(this);
+    this.server.ws.connection.onerror = this.onErrorWebsocket.bind(this);
+    this.server.ws.connection.onmessage = this.onMessageWebsocket.bind(this);
+  },
+
+  /**
    * Send a Websocket message (object)
    */
   sendWS: function(json) {
@@ -473,6 +537,16 @@ _Push.prototype = {
       }.bind(this), this.server.keepalive);
     }
   },
+
+  onOpenWebsocket_reg: function() {
+    this.debug('[onOpenWebsocket] Opened connection to ' + this.server.host);
+    this.server.ws.ready = true;
+
+    // We shall registerUA each new connection
+    this.debug('[onOpenWebsocket] Started registration to the notification server');
+    this.requestRemotePermission(_IN);
+  },
+
 
   onCloseWebsocket: function(e) {
     this.debug('[onCloseWebsocket] Closed connection to ' + this.server.ad +

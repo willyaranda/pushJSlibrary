@@ -15,6 +15,18 @@
   	};
     };
 
+    function register_fake(_IN,callback) {
+    var c = navigator.pushNotification.requestRemotePermission_fake(_IN);
+  	c.onsuccess=function(url) {
+    		$('endpointURL').innerHTML = url;
+		_IN.pushEndPointURL = url;
+                if (callback)
+                  callback(url, 1);
+  	};
+  	c.onmessage=function(msg) {
+    		$('asyncmsg').innerHTML = JSON.stringify(msg);
+  	};
+    };
 
     function generateMQJSON() {
       t = $('queuedata');

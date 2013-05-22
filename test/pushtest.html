@@ -15,6 +15,10 @@ and open the template in the editor.
     <div id="mozAPI">
       <div id="endpointURL"></div>
       <hr>
+      <h2>open connection with a message different from HELLO</h2>
+      <button onclick="register_fake()">openWebSocket_register()</button>
+      <br>
+      <hr>
       <h2>hello tests</h2>
       <button onclick="navigator.pushNotification.requestHello()">hello()</button>
       <button onclick="navigator.pushNotification.requestHello( { uaid: null } )">hello_null_uaid()</button>
@@ -24,16 +28,25 @@ and open the template in the editor.
       <button onclick="navigator.pushNotification.requestHello( { channels: [] })">hello_emptyChannelIDarray()</button>
       <button onclick="navigator.pushNotification.requestHello( { channels: ['1234'] })">hello_oneChannelID()</button>
       <button onclick="navigator.pushNotification.requestHello( { channels: ['1234','4321'] })">hello_severalChannelID()</button>
+      <button onclick="navigator.pushNotification.requestHello( { channels: 1234 })">hello_ChannelID_objectId()</button>
       <br>
       <button onclick="navigator.pushNotification.requestHello( { ip: '256.256.256.256' } )">hello_interface_nokIP_okport()</button>
       <button onclick="navigator.pushNotification.requestHello( { port: 80000 } )">hello_interface_okIP_nokport()</button>
       <button onclick="navigator.pushNotification.requestHello()">hello_interface_okIP_okport()</button>
       <button onclick="navigator.pushNotification.requestHello( { ip: '256.256.256.256' , port: 80000} )">hello_interface_nokIP_nokport()</button>
       <br>
+      <button onclick="navigator.pushNotification.requestHello( { ip: '10.95.30.174' } )">hello_interface_changeIP()</button>
+      <button onclick="navigator.pushNotification.requestHello( { port: 8081  } )">hello_interface_changePort()</button>
+      <button onclick="navigator.pushNotification.requestHello( { ip: '10.95.30.174', port: 8081 } )">hello_interface_changeIP_port()</button>
+      <br>
       <button onclick="navigator.pushNotification.requestHello( { mcc: 'hola' } )">hello_mobile_nokmcc_okmnc()</button>
       <button onclick="navigator.pushNotification.requestHello( { mnc: 'hola' } )">hello_mobile_okmcc_nokmnc()</button>
       <button onclick="navigator.pushNotification.requestHello()">hello_mobile_okmcc_okmnc()</button>
       <button onclick="navigator.pushNotification.requestHello( { mcc: 'hola', mnc: 'hola'} )">hello_mobile_nokmcc_nokmnc()</button>
+      <br>
+      <button onclick="navigator.pushNotification.requestHello( { mcc: '215' } )">hello_mobile_change_mcc()</button>
+      <button onclick="navigator.pushNotification.requestHello( { mnc: '08' } )">hello_mobile_change_mnc()</button>
+      <button onclick="navigator.pushNotification.requestHello( { mcc: '215', mnc:'08' })">hello_mobile_change_mcc_mnc()</button>
       <hr>
       <h2>register tests</h2>
       <button onclick="register( { channels: '1234' })">register()</button>
@@ -78,10 +91,14 @@ and open the template in the editor.
       Keepalive <input id="setup_ka" onchange="changeSetup('keepalive',$('setup_ka').value)" /> msec<br />
       <input id="setup_wu_enabled" type="checkbox" onclick="changeSetup('wakeup_enabled',$('setup_wu_enabled').checked)" /> Wakeup enabled<br />
       Wakeup host <input id="setup_wu_host" onchange="changeSetup('wakeup_host',$('setup_wu_host').value)" /><br />
+      Wakeup alternative host <input id="setup_wu_alt_host" onchange="changeSetup('wakeup_alt_host',$('setup_wu_alt_host').value)" /><br />
       Wakeup port <input id="setup_wu_port" onchange="changeSetup('wakeup_port',$('setup_wu_port').value)" /><br />
+      Wakeup alternative port <input id="setup_wu_alt_port" onchange="changeSetup('wakeup_alt_port',$('setup_wu_alt_port').value)" /><br />
       Wakeup protocol <input id="setup_wu_proto" onchange="changeSetup('wakeup_protocol',$('setup_wu_proto').value)" /><br />
       Wakeup mcc <input id="setup_wu_mcc" onchange="changeSetup('wakeup_mcc',$('setup_wu_mcc').value)" /><br />
+      Wakeup alternative mcc <input id="setup_wu_alt_mcc" onchange="changeSetup('wakeup_alt_mcc',$('setup_wu_alt_mcc').value)" /><br />
       Wakeup mnc <input id="setup_wu_mnc" onchange="changeSetup('wakeup_mnc',$('setup_wu_mnc').value)" /><br />
+      Wakeup alternative mnc <input id="setup_wu_alt_mnc" onchange="changeSetup('wakeup_alt_mnc',$('setup_wu_alt_mnc').value)" /><br />
     </div>
     <div>
       <button onclick="generateMQJSON()">getMessageQueueJSON</button>
