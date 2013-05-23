@@ -161,7 +161,7 @@ describe("'Hello' tests ...", function(){
 	describe("Hello() objectId as channel ID", function(){
 		resetSettings();
 		doHello({channels: 1234});
-		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":1234, '"messageType":"hello"']);
+		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":1234', '"messageType":"hello"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":457', '"uaid":_UAID', '"messageType":"hello"']);
 	});
 	
