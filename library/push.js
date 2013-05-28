@@ -114,7 +114,7 @@ _Push.prototype = {
     var cb = {};
 
     this.setGlobals(_IN);
-    this.openWebsocket_reg();
+    //this.openWebsocket_reg();
 
     this.registerUA(function () {
       this.registerWA(function(URL) {
