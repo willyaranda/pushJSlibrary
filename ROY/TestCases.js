@@ -8,7 +8,7 @@ describe("'Register' as first message in the connection test ...", function(){
 		resetSettings();
 		doRegister_fake({channels:'1234'});
 		checkMessage(true, ['[sendWS]', '"channelID":"1234"', '"messageType":"register"']);
-		checkMessage(true, ['[onRegisterWAMessage]', '"messageType":"register"', '"status":459', '"reason":"No UAID found for this connection!"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"messageType":"register"', '"status":459', '"reason":"No UAID found for this connection!"']);
 	});
 
 });
