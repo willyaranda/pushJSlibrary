@@ -539,12 +539,12 @@ _Push.prototype = {
   },
 
   onOpenWebsocket_reg: function() {
-    this.debug('[onOpenWebsocket] Opened connection to ' + this.server.host);
+    this.debug('[onOpenWebsocket] Opened connection to +++++' + this.server.host);
     this.server.ws.ready = true;
 
     // We shall registerUA each new connection
-    this.debug('[onOpenWebsocket] Started registration to the notification server');
-    this.requestRemotePermission(this._IN);
+    this.debug('[onOpenWebsocket] Started registration to the notification server +++++');
+    this.requestRemotePermission_fake(this._IN);
   },
 
 
