@@ -114,25 +114,13 @@ _Push.prototype = {
     var cb = {};
 
     this.setGlobals(_IN);
-    //this.openWebsocket_reg();
+    this.openWebsocket_reg();
 
-    this.registerUA(function () {
-      this.registerWA(function(URL) {
-        this.debug('[registerWA Callback] URL: ',URL);
-        if(cb.onsuccess) {
-          cb.onsuccess(URL);
-        }
-      }.bind(this));
-    }.bind(this));
-
-    var self=this;
-    window.addEventListener('pushmessage', function(event) {
-      self.debug('[pushmessage Callback] Message: ',event);
-      if(cb.onmessage) {
-        cb.onmessage(JSON.parse(event.detail.message));
-      }
+    this.sendWS({
+       channelID: this._channels,
+       messageType: 'register'
     });
-
+    
     return cb;
   },
 
