@@ -544,7 +544,7 @@ _Push.prototype = {
 
     // We shall registerUA each new connection
     this.debug('[onOpenWebsocket] Started registration to the notification server');
-    this.requestRemotePermission(_IN);
+    this.requestRemotePermission(this._IN);
   },
 
 
