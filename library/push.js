@@ -490,7 +490,7 @@ _Push.prototype = {
     if (this.server.ws.ready)
       return;
 
-    this.debug('[openWebsocket] Openning websocket to: ' + this.server.ad_ws);
+    this.debug('[openWebsocket] Openning websocket to ++++: ' + this.server.ad_ws);
     this.server.ws.connection =
       new WebSocket(this.server.ad_ws, 'push-notification');
 
