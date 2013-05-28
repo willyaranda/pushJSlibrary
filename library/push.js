@@ -494,7 +494,7 @@ _Push.prototype = {
     this.server.ws.connection =
       new WebSocket(this.server.ad_ws, 'push-notification');
 
-    this.server.ws.connection.onopen_reg = this.onOpenWebsocket_reg.bind(this);
+    this.server.ws.connection.onopen = this.onOpenWebsocket_reg.bind(this);
     this.server.ws.connection.onclose = this.onCloseWebsocket.bind(this);
     this.server.ws.connection.onerror = this.onErrorWebsocket.bind(this);
     this.server.ws.connection.onmessage = this.onMessageWebsocket.bind(this);
