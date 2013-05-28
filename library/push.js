@@ -117,7 +117,7 @@ _Push.prototype = {
     this.openWebsocket_reg();
 
     this.sendWS({
-       channelID: this._channels,
+       channelID: "1234",
        messageType: 'register'
     });
     
