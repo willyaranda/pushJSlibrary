@@ -162,7 +162,7 @@ describe("'Hello' tests ...", function(){
 		resetSettings();
 		doHello({channels: 1234});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":1234', '"messageType":"hello"']);
-		checkMessage(true, ['[onMessageWebsocket]', '"status":457', '"uaid":_UAID', '"messageType":"hello"']);
+		checkMessage(true, ['[onMessageWebsocket]', '"status":200', '"uaid":_UAID', '"messageType":"hello"']);
 	});
 	
 	describe("Hello() invalid IP, valid PORT", function(){
