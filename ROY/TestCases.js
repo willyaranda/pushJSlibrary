@@ -280,7 +280,7 @@ describe("'Hello' tests ...", function(){
 		doHello();
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
-		doHello({mnc:'08'});
+		doHello({mnc:'01'});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mnc":"08"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
 	});
@@ -291,7 +291,7 @@ describe("'Hello' tests ...", function(){
 		doHello();
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
-		doHello({mcc:'215',mnc:'08'});
+		doHello({mcc:'234',mnc:'02'});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mcc":"215"','"mnc":"08"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
 	});
