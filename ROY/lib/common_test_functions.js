@@ -237,14 +237,15 @@ function doUnRegister(p_skipCheck, _IN){
 //
 // Update version
 //
-function doUpdateVersion(_IN){
+function doUpdateVersion(_IN,version){
 	it ("(updateVersion)", function(){
 		runs(function(){
 			//
 			// Always clear the array first so we know that what's in it came AFTER our click.
 			//
 			ConsoleLog.length = 0;
-			register(_IN,function() {updateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);});			
+			//register(_IN,function() {updateVersion(document.getElementById("endpointURL").innerHTML,document.getElementById("channelVersion").value);});
+			register(_IN,function() {updateVersion(document.getElementById("endpointURL").innerHTML,version);});						
 		});
 		quickCommCheck();
 		waits(2000);

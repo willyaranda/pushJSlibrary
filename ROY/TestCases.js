@@ -236,6 +236,7 @@ describe("'Hello' tests ...", function(){
 		doHello();
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		waits(61000);
 		doHello({ip:'10.95.30.174'});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"ip":"10.95.30.174"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
@@ -247,6 +248,7 @@ describe("'Hello' tests ...", function(){
 		doHello();
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		waits(61000);
 		doHello({port:8081});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"port":8081']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
@@ -258,6 +260,7 @@ describe("'Hello' tests ...", function(){
 		doHello();
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		waits(61000);
 		doHello({ip:'10.95.30.174',port:8081});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"ip":"10.95.30.174"','"port":8081']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
@@ -269,6 +272,7 @@ describe("'Hello' tests ...", function(){
 		doHello();
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		waits(61000);
 		doHello({mcc:'215'});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mcc":"215"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
@@ -280,6 +284,7 @@ describe("'Hello' tests ...", function(){
 		doHello();
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		waits(61000);
 		doHello({mnc:'01'});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mnc":"01"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
@@ -291,6 +296,7 @@ describe("'Hello' tests ...", function(){
 		doHello();
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
+		waits(61000);
 		doHello({mcc:'234',mnc:'02'});
 		checkMessage(true, ['[sendWS]', '"uaid":', '"channelIDs":[]', '"messageType":"hello"','"wakeup_hostport"','"mcc":"234"','"mnc":"02"']);
 		checkMessage(true, ['[onMessageWebsocket]', '"status":201', '"uaid":_UAID', '"messageType":"hello"']);
@@ -337,7 +343,7 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack");
 		doHello();
-                doUpdateVersion({channels: '1234'});
+                doUpdateVersion({channels: '1234'},"1");
 		waits(1000);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"1"}]']);
 		doUnRegister(true);
@@ -347,7 +353,7 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_updates");
 		doHello();
-                doUpdateVersion({channels: '1234'});
+                doUpdateVersion({channels: '1234'},"1");
 		waits(1000);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
@@ -357,7 +363,7 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_invalid_channelID");
 		doHello();
-                doUpdateVersion({channels: '1234'});
+                doUpdateVersion({channels: '1234'},"1");
 		waits(1000);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
@@ -367,7 +373,7 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_channelID");
 		doHello();
-		doUpdateVersion({channels: '1234'});		
+		doUpdateVersion({channels: '1234'},"1");		
 		waits(1000);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
@@ -377,7 +383,7 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_null_version");
 		doHello();
-		doUpdateVersion({channels: '1234'});		
+		doUpdateVersion({channels: '1234'},"1");		
 		waits(1000);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
@@ -387,7 +393,7 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("ack_invalid_version");
 		doHello();
-		doUpdateVersion({channels: '1234'});		
+		doUpdateVersion({channels: '1234'},"1");		
 		waits(1000);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"ack"', '"status":457', '"reason":"Not valid channelID sent"']);
 		doUnRegister(true);
@@ -397,10 +403,69 @@ describe("'ACK' tests (these pause for > 1 minute) ...", function(){
 		resetSettings();
 		setTrue("no_ack");
 		doHello();
-		doUpdateVersion({channels: '1234'});		
+		doUpdateVersion({channels: '1234'},"1");		
 		waits(1000);
 		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"1"}]']);
 		doUnRegister(true);
 	});
-	
 });
+
+describe("PUT tests (these pause for > 1 minute) ...", function(){
+	describe("Notification with correct version", function(){
+		resetSettings();
+		doHello();
+		doUpdateVersion({channels: '1234'},"1");		
+		waits(1000);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"1"}]']);
+		doUnRegister(true);
+	});
+
+	describe("Notification with no version", function(){
+		resetSettings();
+		doHello();
+		doUpdateVersion({channels: '1234'});		
+		waits(1000);
+		//checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"1"}]']);
+		doUnRegister(true);
+	});
+
+	describe("Notification with incorrect version", function(){
+		resetSettings();
+		doHello();
+		doUpdateVersion({channels: '1234'},"hello");		
+		waits(1000);
+		//checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"1"}]']);
+		doUnRegister(true);
+	});
+
+	describe("Notification with highest accepted version", function(){
+		resetSettings();
+		doHello();
+		doUpdateVersion({channels: '1234'},"9007199254740992");		
+		waits(1000);
+		checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"9007199254740992"}]']);
+		doUnRegister(true);
+	});
+
+	describe("Notification with highest accepted version +1", function(){
+		resetSettings();
+		doHello();
+		doUpdateVersion({channels: '1234'},"9007199254740993");		
+		waits(1000);
+		//checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"9007199254740992"}]']);
+		doUnRegister(true);
+	});
+	
+	describe("Notification with highest accepted version +1 length", function(){
+		resetSettings();
+		doHello();
+		doUpdateVersion({channels: '1234'},"90071992547409921");		
+		waits(1000);
+		//checkMessage(true, ['[onMessageWebsocket]' , '"messageType":"notification"', '"updates"', '[{"channelID":"1234","version":"9007199254740992"}]']);
+		doUnRegister(true);
+	});
+
+
+});
+	
+
