@@ -311,8 +311,8 @@ _Push.prototype = {
     this.wakeup = {};
     this.setup({
       debug: true,
-      host: 'localhost',
-      port: 8080,
+      host: 'uapush-nv.srv.openwebdevice.com',
+      port: null,
       ssl: true,
       keepalive: 60000,
       wakeup_enabled: false,
@@ -349,7 +349,11 @@ _Push.prototype = {
     this.debug('Initializing',this.server);
 
     this.server.ad_ws = 'ws'+(this.server.ssl == "true" || this.server.ssl ? 's' : '')+'://';
-    this.server.ad_ws += this.server.host + ':' + this.server.port;
+	if(this.server.port) {
+		this.server.ad_ws += this.server.host + ':' + this.server.port;
+	} else {
+		this.server.ad_ws += this.server.host;		
+	}
 
     this.server.ws = {
       connection: null,
