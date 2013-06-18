@@ -3,10 +3,10 @@
  * on a non natively supported browsers.
  * This can be used as a secure fallback since the native version is used if it
  * exists
- * 
+ *
  * Author: Fernando Rodríguez Sela, 2013
  * All rights reserverd. January 2013
- * 
+ *
  * License: GNU Affero V3 (see LICENSE file)
  */
 
@@ -51,7 +51,7 @@ _Push.prototype = {
   },
 
   requestHello: function(_IN) {
-    this.hello(_IN,false); 
+    this.hello(_IN,false);
   },
 
   requestRemotePermissionEx: function(watoken, certUrl) {
@@ -120,7 +120,7 @@ _Push.prototype = {
        channelID: "1234",
        messageType: 'register'
     });
-    
+
     return cb;
   },
 
@@ -162,42 +162,43 @@ _Push.prototype = {
     // Setupable parameters:
     //  id: [ 'DESCRIPTION', 'attribute to store in', Shall be reinit? ]
     var _params = {
-      host: ['hostname', 'this.server.host', true],
-      port: ['port', 'this.server.port', true],
-      ssl: ['ssl', 'this.server.ssl', true],
+      host: ['hostname', 'server.host', true],
+      port: ['port', 'server.port', true],
+      ssl: ['ssl', 'server.ssl', true],
 
       // Out of the W3C standard
-      debug: ['DEBUG', 'this.DEBUG', false],
-      keepalive: ['keepalive', 'this.server.keepalive', true],
+      debug: ['DEBUG', 'DEBUG', false],
+      keepalive: ['keepalive', 'server.keepalive', true],
 
       // WakeUp development parameters
-      wakeup_enabled: ['WakeUp ENABLED', 'this.wakeup.enabled', true],
-      wakeup_host: ['WakeUp host', 'this.wakeup.host', true],
-      wakeup_alt_host: ['WakeUp alt host', 'this.wakeup.host_alt', true],
-      wakeup_port: ['WakeUp port', 'this.wakeup.port', true],
-      wakeup_alt_port: ['WakeUp alt port', 'this.wakeup.port_alt', true],
-      wakeup_protocol: ['WakeUp protocol', 'this.wakeup.protocol', true],
-      wakeup_mcc: ['WakeUp MCC', 'this.wakeup.mcc', true],
-      wakeup_alt_mcc: ['WakeUp alt MCC', 'this.wakeup.mcc_alt', true],
-      wakeup_mnc: ['WakeUp MNC', 'this.wakeup.mnc', true],
-      wakeup_alt_mnc: ['WakeUp alt MNC', 'this.wakeup.mnc_alt', true],
+      wakeup_enabled: ['WakeUp ENABLED', 'wakeup.enabled', true],
+      wakeup_host: ['WakeUp host', 'wakeup.host', true],
+      wakeup_alt_host: ['WakeUp alt host', 'wakeup.host_alt', true],
+      wakeup_port: ['WakeUp port', 'wakeup.port', true],
+      wakeup_alt_port: ['WakeUp alt port', 'wakeup.port_alt', true],
+      wakeup_protocol: ['WakeUp protocol', 'wakeup.protocol', true],
+      wakeup_mcc: ['WakeUp MCC', 'wakeup.mcc', true],
+      wakeup_alt_mcc: ['WakeUp alt MCC', 'wakeup.mcc_alt', true],
+      wakeup_mnc: ['WakeUp MNC', 'wakeup.mnc', true],
+      wakeup_alt_mnc: ['WakeUp alt MNC', 'wakeup.mnc_alt', true],
 
       //ACK message type
-      ack: ['ack','this.ack', true],
-      ack_null_updates: ['ack_null_updates', 'this.ack_null_updates', true],
-      ack_invalid_channelID: ['ack_invalid_channelID','this.ack_invalid_channelID', true],
-      ack_null_channelID: ['ack_null_channelID','this.ack_null_channelID', true],
-      ack_null_version: ['ack_null_version','this.ack_null_version', true],
-      ack_invalid_version: ['ack_invalid_version','this.ack_invalid_version', true],
-      no_ack: ['no_ack','this.no_ack',true],
+      ack: ['ack','ack', true],
+      ack_null_updates: ['ack_null_updates', 'ack_null_updates', true],
+      ack_invalid_channelID: ['ack_invalid_channelID','ack_invalid_channelID', true],
+      ack_null_channelID: ['ack_null_channelID','ack_null_channelID', true],
+      ack_null_version: ['ack_null_version','ack_null_version', true],
+      ack_invalid_version: ['ack_invalid_version','ack_invalid_version', true],
+      no_ack: ['no_ack','no_ack',true],
 
       //keep alive
-      ping: ['ping','this.ping', true],
-      pong: ['pong','this.pong', true],
-      other: ['other','this.other', true],
+      ping: ['ping','ping', true],
+      pong: ['pong','pong', true],
+      other: ['other','other', true],
 
-      pushEndPointURL: ['pushEndPointURL','this.pushEndPointURL',true]
+      pushEndPointURL: ['pushEndPointURL','pushEndPointURL',true]
     };
+    var self = this;
     var _setup = function(param, value) {
       if(param === undefined) {
         this.debug('[setup::_setup] No recognized param value');
@@ -207,15 +208,19 @@ _Push.prototype = {
         return;
       }
 
-      this.debug('[setup::_setup] Changing ' + param[0] + ' to: ' + value);
-      if(typeof(value) == 'string') {
-        eval(param[1] += ' = "' + value + '"');
+      //Please, do not look at this code.
+      self.debug('[setup::_setup] Changing --' + param[1] + '-- to: --' + value + '--');
+      var e = param[1].split('.');
+      if (e[1]) {
+        var f = e[1].split('.');
+        self[e[0]][f[0]] = value;
       } else {
-        eval(param[1] += ' = ' + value);
+        self[e[0]] = value;
       }
-      if (param[2])
-        this.initialized = false;
-    }.bind(this);
+      if (param[2]) {
+        self.initialized = false;
+      }
+    };
 
     this.debug('[setup] Setup data received: ', data);
     _setup(_params.host, data.host);
@@ -240,7 +245,7 @@ _Push.prototype = {
 
     // ACK parameters
     _setup(_params.ack, data.ack);
-    _setup(_params.ack_null_updates, data.ack_null_updates); 
+    _setup(_params.ack_null_updates, data.ack_null_updates);
     _setup(_params.ack_invalid_channelID, data.ack_invalid_channelID);
     _setup(_params.ack_null_channelID, data.ack_null_channelID);
     _setup(_params.ack_null_version, data.ack_null_version);
@@ -352,7 +357,7 @@ _Push.prototype = {
 	if(this.server.port) {
 		this.server.ad_ws += this.server.host + ':' + this.server.port;
 	} else {
-		this.server.ad_ws += this.server.host;		
+		this.server.ad_ws += this.server.host;
 	}
 
     this.server.ws = {
@@ -399,12 +404,12 @@ _Push.prototype = {
         messageType: 'hello'
       });
     }
-   
+
     this.onHelloMessage = function(msg) {
       this.token = msg.uaid;
     }.bind(this);
 
- 
+
   },
 
   /**
@@ -589,8 +594,8 @@ _Push.prototype = {
           "detail": { "message": JSON.stringify(msg.updates) }
         });
         window.dispatchEvent(event);
-	
-	if (this.ack_null_updates)	
+
+	if (this.ack_null_updates)
 	{
 		this.debug('[sendWS]{"messageType": "ack", "updates": null}');
         	this.sendWS({
